@@ -12,3 +12,4 @@ A collection of idiomatic patterns for Go language.
 | [RingHash](/docs/ringhash.md) | Provides a ring hash implementation | ✔ |
 | [Semaphore](/docs/semaphore.md) | Allows controlling access to a common resource | ✔ |
 | [Singleton](/docs/singleton.md) | Restricts instantiation of a type to one object | ✔ |
+| [Subsetting](/docs/subset.md) | Implements client deterministic subsetting | ✔ |
