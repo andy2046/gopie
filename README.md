@@ -1,6 +1,8 @@
 
 A collection of idiomatic patterns for Go language.
 
+![gopie](./gopie.png "gopie")
+
 ## Patterns
 
 | Pattern | Description | Status |
