@@ -112,7 +112,7 @@ func (list *SkipList) Set(key string, value int64) *Element {
 	return element
 }
 
-// Get searches element by provided key and returns the element if found or nil if not.
+// Get searches element by provided key and returns the element if found or nil otherwise.
 func (list *SkipList) Get(key string) *Element {
 	list.mutex.Lock()
 	defer list.mutex.Unlock()
@@ -137,7 +137,7 @@ func (list *SkipList) Get(key string) *Element {
 }
 
 // Remove deletes the element with provided key from the list,
-// and returns the removed element if found or nil if not.
+// and returns the removed element if found or nil otherwise.
 func (list *SkipList) Remove(key string) *Element {
 	list.mutex.Lock()
 	defer list.mutex.Unlock()

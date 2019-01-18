@@ -63,20 +63,20 @@ Key returns the given Element key.
 
 
 
-### <a name="Element.Next">func</a> (\*Element) [Next](/src/target/types.go?s=722:755#L44)
+### <a name="Element.Next">func</a> (\*Element) [Next](/src/target/types.go?s=743:776#L44)
 ``` go
 func (e *Element) Next() *Element
 ```
-Next returns the adjacent next Element or nil.
+Next returns the adjacent next Element if existed or nil otherwise.
 
 
 
 
-### <a name="Element.NextLevel">func</a> (\*Element) [NextLevel](/src/target/types.go?s=855:902#L49)
+### <a name="Element.NextLevel">func</a> (\*Element) [NextLevel](/src/target/types.go?s=897:944#L49)
 ``` go
 func (e *Element) NextLevel(level int) *Element
 ```
-NextLevel returns the adjacent next Element at provided level or nil.
+NextLevel returns the adjacent next Element at provided level if existed or nil otherwise.
 
 
 
@@ -123,11 +123,11 @@ Front returns the first element in the list.
 
 
 
-### <a name="SkipList.Get">func</a> (\*SkipList) [Get](/src/target/skiplist.go?s=2934:2980#L116)
+### <a name="SkipList.Get">func</a> (\*SkipList) [Get](/src/target/skiplist.go?s=2937:2983#L116)
 ``` go
 func (list *SkipList) Get(key string) *Element
 ```
-Get searches element by provided key and returns the element if found or nil if not.
+Get searches element by provided key and returns the element if found or nil otherwise.
 
 
 
@@ -151,7 +151,7 @@ If `level` < 1, it does not set current max level.
 
 
 
-### <a name="SkipList.Probability">func</a> (\*SkipList) [Probability](/src/target/skiplist.go?s=4675:4740#L191)
+### <a name="SkipList.Probability">func</a> (\*SkipList) [Probability](/src/target/skiplist.go?s=4681:4746#L191)
 ``` go
 func (list *SkipList) Probability(newProbability float64) float64
 ```
@@ -161,12 +161,12 @@ If `newProbability` < 0, it does not set current P.
 
 
 
-### <a name="SkipList.Remove">func</a> (\*SkipList) [Remove](/src/target/skiplist.go?s=3438:3487#L141)
+### <a name="SkipList.Remove">func</a> (\*SkipList) [Remove](/src/target/skiplist.go?s=3444:3493#L141)
 ``` go
 func (list *SkipList) Remove(key string) *Element
 ```
 Remove deletes the element with provided key from the list,
-and returns the removed element if found or nil if not.
+and returns the removed element if found or nil otherwise.
 
 
 

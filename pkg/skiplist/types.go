@@ -40,12 +40,12 @@ func (e *Element) Value() int64 {
 	return e.value
 }
 
-// Next returns the adjacent next Element or nil.
+// Next returns the adjacent next Element if existed or nil otherwise.
 func (e *Element) Next() *Element {
 	return e.forward[0]
 }
 
-// NextLevel returns the adjacent next Element at provided level or nil.
+// NextLevel returns the adjacent next Element at provided level if existed or nil otherwise.
 func (e *Element) NextLevel(level int) *Element {
 	if level >= len(e.forward) || level < 0 {
 		return nil

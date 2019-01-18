@@ -18,3 +18,4 @@ A collection of idiomatic patterns for Go language.
 | [Singleton](/docs/singleton.md) | Restricts instantiation of a type to one object | ✔ |
 | [Subsetting](/docs/subset.md) | Implements client deterministic subsetting | ✔ |
 | [SkipList](/docs/skiplist.md) | Implements Skip List data structure | ✔ |
+| [BloomFilter](/docs/bloom.md) | Implements Bloom filter | ✔ |
