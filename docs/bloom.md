@@ -16,17 +16,19 @@ Package bloom implements a Bloom filter.
 * [func Guess(n uint64, p float64) (m, k uint64)](#Guess)
 * [type Bloom](#Bloom)
   * [func New(m, k uint64) (bf Bloom)](#New)
+  * [func NewB(m, k uint64) (bf Bloom)](#NewB)
+  * [func NewBGuess(n uint64, p float64) (bf Bloom)](#NewBGuess)
   * [func NewGuess(n uint64, p float64) (bf Bloom)](#NewGuess)
 
 
 #### <a name="pkg-files">Package files</a>
-[bloom.go](/src/github.com/andy2046/gopie/pkg/bloom/bloom.go) [siphash.go](/src/github.com/andy2046/gopie/pkg/bloom/siphash.go) 
+[bloom.go](/src/github.com/andy2046/gopie/pkg/bloom/bloom.go) [bloombit.go](/src/github.com/andy2046/gopie/pkg/bloom/bloombit.go) [siphash.go](/src/github.com/andy2046/gopie/pkg/bloom/siphash.go) 
 
 
 
 
 
-## <a name="Guess">func</a> [Guess](/src/target/bloom.go?s=1357:1402#L59)
+## <a name="Guess">func</a> [Guess](/src/target/bloom.go?s=1364:1409#L59)
 ``` go
 func Guess(n uint64, p float64) (m, k uint64)
 ```
@@ -58,7 +60,7 @@ Bloom represents the interface for bloom filter.
 
 
 
-### <a name="New">func</a> [New](/src/target/bloom.go?s=825:857#L39)
+### <a name="New">func</a> [New](/src/target/bloom.go?s=832:864#L39)
 ``` go
 func New(m, k uint64) (bf Bloom)
 ```
@@ -67,7 +69,25 @@ m is the size of bloom filter bits.
 k is the number of hash functions.
 
 
-### <a name="NewGuess">func</a> [NewGuess](/src/target/bloom.go?s=1217:1262#L53)
+### <a name="NewB">func</a> [NewB](/src/target/bloombit.go?s=535:568#L22)
+``` go
+func NewB(m, k uint64) (bf Bloom)
+```
+NewB creates bitmap based bloom filter from the provided m/k.
+m is the size of bloom filter bits.
+k is the number of hash functions.
+
+
+### <a name="NewBGuess">func</a> [NewBGuess](/src/target/bloombit.go?s=939:985#L36)
+``` go
+func NewBGuess(n uint64, p float64) (bf Bloom)
+```
+NewBGuess estimates m/k from the provided n/p then creates bitmap based bloom filter.
+n is the estimated number of elements in the bloom filter.
+p is the false positive probability.
+
+
+### <a name="NewGuess">func</a> [NewGuess](/src/target/bloom.go?s=1224:1269#L53)
 ``` go
 func NewGuess(n uint64, p float64) (bf Bloom)
 ```

@@ -21,7 +21,7 @@ type (
 	}
 
 	bloomFilter struct {
-		bitmap []bool // bloom filter bitmap
+		bitmap []bool // bloom filter boolean slice
 		k      uint64 // number of hash functions
 		n      uint64 // number of elements in the bloom filter
 		m      uint64 // size of the bloom filter bits
