@@ -30,6 +30,11 @@ func TestBasic(t *testing.T) {
 	if !e3a {
 		t.Errorf("%q should Exist the second time we check.", e3)
 	}
+	f.Remove(e1)
+	e1a = f.Exist(e1)
+	if e1a {
+		t.Errorf("%q should be Removed.", e1)
+	}
 }
 
 func TestUint(t *testing.T) {
@@ -64,6 +69,11 @@ func TestUint(t *testing.T) {
 	if n4a {
 		t.Errorf("%q should not Exist.", n4)
 	}
+	f.Remove(n1)
+	n1a = f.Exist(n1)
+	if n1a {
+		t.Errorf("%q should be Removed.", n1)
+	}
 }
 
 func TestString(t *testing.T) {
@@ -93,6 +103,11 @@ func TestString(t *testing.T) {
 	}
 	if s4a {
 		t.Errorf("%q should not Exist.", s4)
+	}
+	f.RemoveString(s1)
+	s1a = f.ExistString(s1)
+	if s1a {
+		t.Errorf("%q should be Removed.", s1)
 	}
 }
 

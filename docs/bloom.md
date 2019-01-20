@@ -15,10 +15,11 @@ Package bloom implements a Bloom filter.
 ## <a name="pkg-index">Index</a>
 * [func Guess(n uint64, p float64) (m, k uint64)](#Guess)
 * [type Bloom](#Bloom)
-  * [func New(m, k uint64) (bf Bloom)](#New)
-  * [func NewB(m, k uint64) (bf Bloom)](#NewB)
-  * [func NewBGuess(n uint64, p float64) (bf Bloom)](#NewBGuess)
-  * [func NewGuess(n uint64, p float64) (bf Bloom)](#NewGuess)
+  * [func NewB(m, k uint64) Bloom](#NewB)
+  * [func NewBGuess(n uint64, p float64) Bloom](#NewBGuess)
+* [type CountingBloom](#CountingBloom)
+  * [func New(m, k uint64) CountingBloom](#New)
+  * [func NewGuess(n uint64, p float64) CountingBloom](#NewGuess)
 
 
 #### <a name="pkg-files">Package files</a>
@@ -28,7 +29,7 @@ Package bloom implements a Bloom filter.
 
 
 
-## <a name="Guess">func</a> [Guess](/src/target/bloom.go?s=1364:1409#L59)
+## <a name="Guess">func</a> [Guess](/src/target/bloom.go?s=1743:1788#L68)
 ``` go
 func Guess(n uint64, p float64) (m, k uint64)
 ```
@@ -37,7 +38,7 @@ Guess estimates m/k based on the provided n/p.
 
 
 
-## <a name="Bloom">type</a> [Bloom](/src/target/bloom.go?s=140:354#L10)
+## <a name="Bloom">type</a> [Bloom](/src/target/bloom.go?s=127:341#L10)
 ``` go
 type Bloom interface {
     Add([]byte)
@@ -52,7 +53,7 @@ type Bloom interface {
     Clear()
 }
 ```
-Bloom represents the interface for bloom filter.
+Bloom is the standard bloom filter.
 
 
 
@@ -60,38 +61,58 @@ Bloom represents the interface for bloom filter.
 
 
 
-### <a name="New">func</a> [New](/src/target/bloom.go?s=832:864#L39)
+### <a name="NewB">func</a> [NewB](/src/target/bloombit.go?s=535:563#L22)
 ``` go
-func New(m, k uint64) (bf Bloom)
+func NewB(m, k uint64) Bloom
 ```
-New creates bloom filter based on the provided m/k.
+NewB creates standard bloom filter based on the provided m/k.
 m is the size of bloom filter bits.
 k is the number of hash functions.
 
 
-### <a name="NewB">func</a> [NewB](/src/target/bloombit.go?s=535:568#L22)
+### <a name="NewBGuess">func</a> [NewBGuess](/src/target/bloombit.go?s=925:966#L35)
 ``` go
-func NewB(m, k uint64) (bf Bloom)
+func NewBGuess(n uint64, p float64) Bloom
 ```
-NewB creates bitmap based bloom filter from the provided m/k.
-m is the size of bloom filter bits.
-k is the number of hash functions.
-
-
-### <a name="NewBGuess">func</a> [NewBGuess](/src/target/bloombit.go?s=939:985#L36)
-``` go
-func NewBGuess(n uint64, p float64) (bf Bloom)
-```
-NewBGuess estimates m/k from the provided n/p then creates bitmap based bloom filter.
+NewBGuess estimates m/k based on the provided n/p then creates standard bloom filter.
 n is the estimated number of elements in the bloom filter.
 p is the false positive probability.
 
 
-### <a name="NewGuess">func</a> [NewGuess](/src/target/bloom.go?s=1224:1269#L53)
+
+
+
+## <a name="CountingBloom">type</a> [CountingBloom](/src/target/bloom.go?s=483:559#L25)
 ``` go
-func NewGuess(n uint64, p float64) (bf Bloom)
+type CountingBloom interface {
+    Bloom
+    Remove([]byte)
+    RemoveString(string)
+}
 ```
-NewGuess estimates m/k based on the provided n/p then creates bloom filter.
+CountingBloom is the bloom filter which allows deletion of entries.
+Take note that an 16-bit counter is maintained for each entry.
+
+
+
+
+
+
+
+### <a name="New">func</a> [New](/src/target/bloom.go?s=1203:1238#L49)
+``` go
+func New(m, k uint64) CountingBloom
+```
+New creates counting bloom filter based on the provided m/k.
+m is the size of bloom filter bits.
+k is the number of hash functions.
+
+
+### <a name="NewGuess">func</a> [NewGuess](/src/target/bloom.go?s=1600:1648#L62)
+``` go
+func NewGuess(n uint64, p float64) CountingBloom
+```
+NewGuess estimates m/k based on the provided n/p then creates counting bloom filter.
 n is the estimated number of elements in the bloom filter.
 p is the false positive probability.
 

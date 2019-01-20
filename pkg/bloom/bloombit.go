@@ -12,28 +12,27 @@ type (
 		k      uint64         // number of hash functions
 		n      uint64         // number of elements in the bloom filter
 		m      uint64         // size of the bloom filter bits
-		shift  uint64         // the shift to get high/low bit fragments
+		shift  uint8          // the shift to get high/low bit fragments
 	}
 )
 
-// NewB creates bitmap based bloom filter from the provided m/k.
+// NewB creates standard bloom filter based on the provided m/k.
 // m is the size of bloom filter bits.
 // k is the number of hash functions.
-func NewB(m, k uint64) (bf Bloom) {
+func NewB(m, k uint64) Bloom {
 	mm, exponent := adjustM(m)
-	bf = &bloomFilterBit{
+	return &bloomFilterBit{
 		bitmap: bitmap.New(mm),
 		m:      mm - 1, // x % 2^i = x & (2^i - 1)
 		k:      k,
 		shift:  64 - exponent,
 	}
-	return bf
 }
 
-// NewBGuess estimates m/k from the provided n/p then creates bitmap based bloom filter.
+// NewBGuess estimates m/k based on the provided n/p then creates standard bloom filter.
 // n is the estimated number of elements in the bloom filter.
 // p is the false positive probability.
-func NewBGuess(n uint64, p float64) (bf Bloom) {
+func NewBGuess(n uint64, p float64) Bloom {
 	m, k := Guess(n, p)
 	return New(m, k)
 }
@@ -44,8 +43,8 @@ func (bf *bloomFilterBit) Add(entry []byte) {
 	l := hash << bf.shift >> bf.shift
 	for i := uint64(0); i < bf.k; i++ {
 		bf.bitmap.SetBit((h+i*l)&bf.m, true)
-		bf.n++
 	}
+	bf.n++
 }
 
 func (bf *bloomFilterBit) AddString(entry string) {

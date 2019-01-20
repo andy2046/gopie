@@ -6,7 +6,7 @@ import (
 )
 
 type (
-	// Bloom represents the interface for bloom filter.
+	// Bloom is the standard bloom filter.
 	Bloom interface {
 		Add([]byte)
 		AddString(string)
@@ -20,37 +20,46 @@ type (
 		Clear()
 	}
 
+	// CountingBloom is the bloom filter which allows deletion of entries.
+	// Take note that an 16-bit counter is maintained for each entry.
+	CountingBloom interface {
+		Bloom
+		Remove([]byte)
+		RemoveString(string)
+	}
+
 	bloomFilter struct {
-		bitmap []bool // bloom filter boolean slice
-		k      uint64 // number of hash functions
-		n      uint64 // number of elements in the bloom filter
-		m      uint64 // size of the bloom filter bits
-		shift  uint64 // the shift to get high/low bit fragments
+		bitmap []uint16 // bloom filter counter
+		k      uint64   // number of hash functions
+		n      uint64   // number of elements in the bloom filter
+		m      uint64   // size of the bloom filter bits
+		shift  uint8    // the shift to get high/low bit fragments
 	}
 )
 
 const (
-	ln2 float64 = 0.6931471805599453 // math.Log(2)
+	ln2                  float64 = 0.6931471805599453 // math.Log(2)
+	maxCountingBloomSize uint64  = 1 << 37            // to avoid panic: makeslice: len out of range
+	maxCounter           uint16  = 65535
 )
 
-// New creates bloom filter based on the provided m/k.
+// New creates counting bloom filter based on the provided m/k.
 // m is the size of bloom filter bits.
 // k is the number of hash functions.
-func New(m, k uint64) (bf Bloom) {
+func New(m, k uint64) CountingBloom {
 	mm, exponent := adjustM(m)
-	bf = &bloomFilter{
-		bitmap: make([]bool, mm),
+	return &bloomFilter{
+		bitmap: make([]uint16, mm),
 		m:      mm - 1, // x % 2^i = x & (2^i - 1)
 		k:      k,
 		shift:  64 - exponent,
 	}
-	return bf
 }
 
-// NewGuess estimates m/k based on the provided n/p then creates bloom filter.
+// NewGuess estimates m/k based on the provided n/p then creates counting bloom filter.
 // n is the estimated number of elements in the bloom filter.
 // p is the false positive probability.
-func NewGuess(n uint64, p float64) (bf Bloom) {
+func NewGuess(n uint64, p float64) CountingBloom {
 	m, k := Guess(n, p)
 	return New(m, k)
 }
@@ -67,23 +76,48 @@ func (bf *bloomFilter) Add(entry []byte) {
 	hash := sipHash(entry)
 	h := hash >> bf.shift
 	l := hash << bf.shift >> bf.shift
+	var idx uint64
 	for i := uint64(0); i < bf.k; i++ {
-		bf.bitmap[(h+i*l)&bf.m] = true
-		bf.n++
+		idx = (h + i*l) & bf.m
+		// avoid overflow
+		if bf.bitmap[idx] < maxCounter {
+			bf.bitmap[idx]++
+		}
 	}
+	bf.n++
 }
 
 func (bf *bloomFilter) AddString(entry string) {
 	bf.Add([]byte(entry))
 }
 
+func (bf *bloomFilter) Remove(entry []byte) {
+	hash := sipHash(entry)
+	h := hash >> bf.shift
+	l := hash << bf.shift >> bf.shift
+	var idx uint64
+	for i := uint64(0); i < bf.k; i++ {
+		idx = (h + i*l) & bf.m
+		// avoid overflow
+		if bf.bitmap[idx] > 0 {
+			bf.bitmap[idx]--
+		}
+	}
+	bf.n--
+}
+
+func (bf *bloomFilter) RemoveString(entry string) {
+	bf.Remove([]byte(entry))
+}
+
 func (bf *bloomFilter) Exist(entry []byte) bool {
 	hash := sipHash(entry)
 	h := hash >> bf.shift
 	l := hash << bf.shift >> bf.shift
-
+	var idx uint64
 	for i := uint64(0); i < bf.k; i++ {
-		if !bf.bitmap[(h+i*l)&bf.m] {
+		idx = (h + i*l) & bf.m
+		if bf.bitmap[idx] == 0 {
 			return false
 		}
 	}
@@ -119,17 +153,17 @@ func (bf *bloomFilter) N() uint64 {
 
 func (bf *bloomFilter) Clear() {
 	for i := range bf.bitmap {
-		bf.bitmap[i] = false
+		bf.bitmap[i] = 0
 	}
 	bf.n = 0
 }
 
-func adjustM(x uint64) (m, exponent uint64) {
+func adjustM(x uint64) (m uint64, exponent uint8) {
 	if x < 512 {
 		x = 512
 	}
 	m = uint64(1)
-	for m < x {
+	for m < x && m < maxCountingBloomSize {
 		m <<= 1
 		exponent++
 	}
