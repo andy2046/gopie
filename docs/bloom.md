@@ -17,13 +17,15 @@ Package bloom implements a Bloom filter.
 * [type Bloom](#Bloom)
   * [func NewB(m, k uint64) Bloom](#NewB)
   * [func NewBGuess(n uint64, p float64) Bloom](#NewBGuess)
+  * [func NewS(fpRate float64) Bloom](#NewS)
+  * [func NewSGuess(n uint64, p, r float64) Bloom](#NewSGuess)
 * [type CountingBloom](#CountingBloom)
   * [func New(m, k uint64) CountingBloom](#New)
   * [func NewGuess(n uint64, p float64) CountingBloom](#NewGuess)
 
 
 #### <a name="pkg-files">Package files</a>
-[bloom.go](/src/github.com/andy2046/gopie/pkg/bloom/bloom.go) [bloombit.go](/src/github.com/andy2046/gopie/pkg/bloom/bloombit.go) [siphash.go](/src/github.com/andy2046/gopie/pkg/bloom/siphash.go) 
+[bloom.go](/src/github.com/andy2046/gopie/pkg/bloom/bloom.go) [bloombit.go](/src/github.com/andy2046/gopie/pkg/bloom/bloombit.go) [bloomscale.go](/src/github.com/andy2046/gopie/pkg/bloom/bloomscale.go) [siphash.go](/src/github.com/andy2046/gopie/pkg/bloom/siphash.go) 
 
 
 
@@ -77,6 +79,24 @@ func NewBGuess(n uint64, p float64) Bloom
 NewBGuess estimates m/k based on the provided n/p then creates standard bloom filter.
 n is the estimated number of elements in the bloom filter.
 p is the false positive probability.
+
+
+### <a name="NewS">func</a> [NewS](/src/target/bloomscale.go?s=638:669#L27)
+``` go
+func NewS(fpRate float64) Bloom
+```
+NewS creates scalable bloom filter based on the provided fpRate.
+fpRate is the target False Positive probability.
+
+
+### <a name="NewSGuess">func</a> [NewSGuess](/src/target/bloomscale.go?s=947:991#L35)
+``` go
+func NewSGuess(n uint64, p, r float64) Bloom
+```
+NewSGuess estimates m/k based on the provided n/p then creates scalable bloom filter.
+n is the estimated number of elements in the bloom filter.
+p is the false positive probability.
+r is the optimal tightening ratio.
 
 
 

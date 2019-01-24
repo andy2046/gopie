@@ -98,6 +98,13 @@ func (bf *bloomFilter) Remove(entry []byte) {
 	var idx uint64
 	for i := uint64(0); i < bf.k; i++ {
 		idx = (h + i*l) & bf.m
+		if bf.bitmap[idx] == 0 {
+			return
+		}
+	}
+
+	for i := uint64(0); i < bf.k; i++ {
+		idx = (h + i*l) & bf.m
 		// avoid overflow
 		if bf.bitmap[idx] > 0 {
 			bf.bitmap[idx]--

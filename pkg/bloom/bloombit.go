@@ -34,7 +34,7 @@ func NewB(m, k uint64) Bloom {
 // p is the false positive probability.
 func NewBGuess(n uint64, p float64) Bloom {
 	m, k := Guess(n, p)
-	return New(m, k)
+	return NewB(m, k)
 }
 
 func (bf *bloomFilterBit) Add(entry []byte) {
@@ -97,4 +97,8 @@ func (bf *bloomFilterBit) Clear() {
 		bf.bitmap.SetBit(i, false)
 	}
 	bf.n = 0
+}
+
+func (bf *bloomFilterBit) estimatedFillRatio() float64 {
+	return 1 - math.Exp(-float64(bf.n)/math.Ceil(float64(bf.m)/float64(bf.k)))
 }
