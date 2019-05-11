@@ -19,3 +19,5 @@ A collection of idiomatic patterns for Go language.
 | [Subsetting](/docs/subset.md) | Implements client deterministic subsetting | ✔ |
 | [SkipList](/docs/skiplist.md) | Implements Skip List data structure | ✔ |
 | [BloomFilter](/docs/bloom.md) | Implements Bloom filter | ✔ |
+| [Count-Min Sketch](/docs/countminsketch.md) | Implements Count-Min Sketch | ✔ |
+| [HyperLogLog](/docs/hyperloglog.md) | Implements HyperLogLog cardinality estimation | ✔ |
