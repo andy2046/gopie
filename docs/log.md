@@ -13,9 +13,12 @@ Package log implements a minimalistic Logger interface.
 
 
 ## <a name="pkg-index">Index</a>
+* [Variables](#pkg-variables)
+* [type Config](#Config)
 * [type Level](#Level)
 * [type Logger](#Logger)
-  * [func NewLogger(level Level, prefix string) Logger](#NewLogger)
+  * [func NewLogger(options ...Option) Logger](#NewLogger)
+* [type Option](#Option)
 
 
 #### <a name="pkg-files">Package files</a>
@@ -23,10 +26,46 @@ Package log implements a minimalistic Logger interface.
 
 
 
+## <a name="pkg-variables">Variables</a>
+``` go
+var (
+    // DefaultConfig is the default Logger Config.
+    DefaultConfig = Config{
+        Level:        INFO,
+        Prefix:       "",
+        DebugHandler: os.Stdout,
+        InfoHandler:  os.Stdout,
+        WarnHandler:  os.Stdout,
+        ErrorHandler: os.Stderr,
+    }
+)
+```
 
 
 
-## <a name="Level">type</a> [Level](/src/target/log.go?s=138:147#L11)
+## <a name="Config">type</a> [Config](/src/target/log.go?s=545:706#L29)
+``` go
+type Config struct {
+    Level        Level
+    Prefix       string
+    DebugHandler io.Writer
+    InfoHandler  io.Writer
+    WarnHandler  io.Writer
+    ErrorHandler io.Writer
+}
+```
+Config used to init Logger.
+
+
+
+
+
+
+
+
+
+
+## <a name="Level">type</a> [Level](/src/target/log.go?s=152:161#L13)
 ``` go
 type Level int
 ```
@@ -52,7 +91,7 @@ Logging Levels.
 
 
 
-## <a name="Logger">type</a> [Logger](/src/target/log.go?s=187:476#L14)
+## <a name="Logger">type</a> [Logger](/src/target/log.go?s=201:510#L16)
 ``` go
 type Logger interface {
     Debug(v ...interface{})
@@ -63,6 +102,7 @@ type Logger interface {
     Infof(format string, v ...interface{})
     Warnf(format string, v ...interface{})
     Errorf(format string, v ...interface{})
+    SetLevel(l Level)
 }
 ```
 Logger is the Logging interface.
@@ -73,11 +113,26 @@ Logger is the Logging interface.
 
 
 
-### <a name="NewLogger">func</a> [NewLogger](/src/target/log.go?s=648:697#L40)
+### <a name="NewLogger">func</a> [NewLogger](/src/target/log.go?s=1217:1257#L69)
 ``` go
-func NewLogger(level Level, prefix string) Logger
+func NewLogger(options ...Option) Logger
 ```
 NewLogger returns a new Logger.
+
+
+
+
+
+## <a name="Option">type</a> [Option](/src/target/log.go?s=753:781#L39)
+``` go
+type Option = func(*Config) error
+```
+Option applies config to Logger Config.
+
+
+
+
+
 
 
 
