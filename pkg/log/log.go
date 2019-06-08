@@ -29,6 +29,7 @@ type (
 	Config struct {
 		Level        Level
 		Prefix       string
+		Flag         int
 		DebugHandler io.Writer
 		InfoHandler  io.Writer
 		WarnHandler  io.Writer
@@ -58,6 +59,7 @@ var (
 	DefaultConfig = Config{
 		Level:        INFO,
 		Prefix:       "",
+		Flag:         log.Ldate | log.Ltime | log.Lshortfile,
 		DebugHandler: os.Stdout,
 		InfoHandler:  os.Stdout,
 		WarnHandler:  os.Stdout,
@@ -142,8 +144,8 @@ func setOption(c *Config, options ...func(*Config) error) error {
 
 func setLoggerz(logConfig *Config) map[Level]*log.Logger {
 	loggerz := make(map[Level]*log.Logger)
-	nonErrorLogger := log.New(os.Stdout, logConfig.Prefix, log.Ldate|log.Ltime|log.Lshortfile)
-	errorLogger := log.New(os.Stderr, logConfig.Prefix, log.Ldate|log.Ltime|log.Lshortfile)
+	nonErrorLogger := log.New(os.Stdout, logConfig.Prefix, logConfig.Flag)
+	errorLogger := log.New(os.Stderr, logConfig.Prefix, logConfig.Flag)
 
 	loggerz[DEBUG] = nonErrorLogger
 	loggerz[INFO] = nonErrorLogger
@@ -151,16 +153,16 @@ func setLoggerz(logConfig *Config) map[Level]*log.Logger {
 	loggerz[ERROR] = errorLogger
 
 	if logConfig.DebugHandler != os.Stdout {
-		loggerz[DEBUG] = log.New(logConfig.DebugHandler, logConfig.Prefix, log.Ldate|log.Ltime|log.Lshortfile)
+		loggerz[DEBUG] = log.New(logConfig.DebugHandler, logConfig.Prefix, logConfig.Flag)
 	}
 	if logConfig.InfoHandler != os.Stdout {
-		loggerz[INFO] = log.New(logConfig.InfoHandler, logConfig.Prefix, log.Ldate|log.Ltime|log.Lshortfile)
+		loggerz[INFO] = log.New(logConfig.InfoHandler, logConfig.Prefix, logConfig.Flag)
 	}
 	if logConfig.WarnHandler != os.Stdout {
-		loggerz[WARN] = log.New(logConfig.WarnHandler, logConfig.Prefix, log.Ldate|log.Ltime|log.Lshortfile)
+		loggerz[WARN] = log.New(logConfig.WarnHandler, logConfig.Prefix, logConfig.Flag)
 	}
 	if logConfig.ErrorHandler != os.Stderr {
-		loggerz[ERROR] = log.New(logConfig.ErrorHandler, logConfig.Prefix, log.Ldate|log.Ltime|log.Lshortfile)
+		loggerz[ERROR] = log.New(logConfig.ErrorHandler, logConfig.Prefix, logConfig.Flag)
 	}
 
 	return loggerz

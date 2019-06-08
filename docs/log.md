@@ -33,6 +33,7 @@ var (
     DefaultConfig = Config{
         Level:        INFO,
         Prefix:       "",
+        Flag:         log.Ldate | log.Ltime | log.Lshortfile,
         DebugHandler: os.Stdout,
         InfoHandler:  os.Stdout,
         WarnHandler:  os.Stdout,
@@ -43,11 +44,12 @@ var (
 
 
 
-## <a name="Config">type</a> [Config](/src/target/log.go?s=545:706#L29)
+## <a name="Config">type</a> [Config](/src/target/log.go?s=545:725#L29)
 ``` go
 type Config struct {
     Level        Level
     Prefix       string
+    Flag         int
     DebugHandler io.Writer
     InfoHandler  io.Writer
     WarnHandler  io.Writer
@@ -113,7 +115,7 @@ Logger is the Logging interface.
 
 
 
-### <a name="NewLogger">func</a> [NewLogger](/src/target/log.go?s=1217:1257#L69)
+### <a name="NewLogger">func</a> [NewLogger](/src/target/log.go?s=1292:1332#L71)
 ``` go
 func NewLogger(options ...Option) Logger
 ```
@@ -123,7 +125,7 @@ NewLogger returns a new Logger.
 
 
 
-## <a name="Option">type</a> [Option](/src/target/log.go?s=753:781#L39)
+## <a name="Option">type</a> [Option](/src/target/log.go?s=772:800#L40)
 ``` go
 type Option = func(*Config) error
 ```
