@@ -31,14 +31,14 @@ Package lru implements a LRU cache.
 
 
 
-## <a name="Cache">type</a> [Cache](/src/target/lru.go?s=115:480#L10)
+## <a name="Cache">type</a> [Cache](/src/target/lru.go?s=115:478#L10)
 ``` go
 type Cache struct {
     // MaxEntries is the maximum number of cache entries
     // before an item is purged. Zero means no limit.
     MaxEntries int
 
-    // OnPurged specificies a function to be executed
+    // OnPurged specifies a function to be executed
     // when an entry is purged from the cache.
     OnPurged func(key interface{}, value interface{})
     // contains filtered or unexported fields
@@ -52,7 +52,7 @@ Cache is a LRU cache.
 
 
 
-### <a name="New">func</a> [New](/src/target/lru.go?s=618:649#L30)
+### <a name="New">func</a> [New](/src/target/lru.go?s=616:647#L30)
 ``` go
 func New(maxEntries int) *Cache
 ```
@@ -62,7 +62,7 @@ New creates a new cache, if maxEntries is zero, the cache has no limit.
 
 
 
-### <a name="Cache.Add">func</a> (\*Cache) [Add](/src/target/lru.go?s=881:936#L42)
+### <a name="Cache.Add">func</a> (\*Cache) [Add](/src/target/lru.go?s=879:934#L42)
 ``` go
 func (c *Cache) Add(key interface{}, value interface{})
 ```
@@ -71,7 +71,7 @@ Add adds value to the cache.
 
 
 
-### <a name="Cache.Clear">func</a> (\*Cache) [Clear](/src/target/lru.go?s=2529:2552#L131)
+### <a name="Cache.Clear">func</a> (\*Cache) [Clear](/src/target/lru.go?s=2527:2550#L131)
 ``` go
 func (c *Cache) Clear()
 ```
@@ -80,7 +80,7 @@ Clear purges all items from the cache.
 
 
 
-### <a name="Cache.Get">func</a> (\*Cache) [Get](/src/target/lru.go?s=1355:1420#L63)
+### <a name="Cache.Get">func</a> (\*Cache) [Get](/src/target/lru.go?s=1353:1418#L63)
 ``` go
 func (c *Cache) Get(key interface{}) (value interface{}, ok bool)
 ```
@@ -89,7 +89,7 @@ Get looks up value by key from the cache.
 
 
 
-### <a name="Cache.Len">func</a> (\*Cache) [Len](/src/target/lru.go?s=2365:2390#L120)
+### <a name="Cache.Len">func</a> (\*Cache) [Len](/src/target/lru.go?s=2363:2388#L120)
 ``` go
 func (c *Cache) Len() int
 ```
@@ -98,7 +98,7 @@ Len returns the number of items in the cache.
 
 
 
-### <a name="Cache.Remove">func</a> (\*Cache) [Remove](/src/target/lru.go?s=1656:1695#L78)
+### <a name="Cache.Remove">func</a> (\*Cache) [Remove](/src/target/lru.go?s=1654:1693#L78)
 ``` go
 func (c *Cache) Remove(key interface{})
 ```
@@ -107,7 +107,7 @@ Remove removes the provided key from the cache.
 
 
 
-### <a name="Cache.RemoveOldest">func</a> (\*Cache) [RemoveOldest](/src/target/lru.go?s=1887:1917#L91)
+### <a name="Cache.RemoveOldest">func</a> (\*Cache) [RemoveOldest](/src/target/lru.go?s=1885:1915#L91)
 ``` go
 func (c *Cache) RemoveOldest()
 ```

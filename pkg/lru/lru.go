@@ -12,7 +12,7 @@ type Cache struct {
 	// before an item is purged. Zero means no limit.
 	MaxEntries int
 
-	// OnPurged specificies a function to be executed
+	// OnPurged specifies a function to be executed
 	// when an entry is purged from the cache.
 	OnPurged func(key interface{}, value interface{})
 
