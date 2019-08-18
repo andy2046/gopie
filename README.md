@@ -21,3 +21,6 @@ A collection of idiomatic patterns for Go language.
 | [BloomFilter](/docs/bloom.md) | Implements Bloom filter | ✔ |
 | [Count-Min Sketch](/docs/countminsketch.md) | Implements Count-Min Sketch | ✔ |
 | [HyperLogLog](/docs/hyperloglog.md) | Implements HyperLogLog cardinality estimation | ✔ |
+| [Circuit Breaker](/docs/breaker.md) | Implements Circuit Breaker | ✔ |
+| [Rate Limiter](/docs/ratelimit.md) | Implements Rate Limiter | ✔ |
+| [Bit Flag](/docs/bitflag.md) | Implements Bit Flag | ✔ |
