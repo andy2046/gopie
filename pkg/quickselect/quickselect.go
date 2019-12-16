@@ -3,7 +3,7 @@ package quickselect
 
 // Select selects the kth element.
 func Select(data []int, k int) int {
-	return do(data, 0, len(data)-1, k)
+	return do(data, 0, len(data)-1, k-1)
 }
 
 func do(a []int, left, right, k int) int {
