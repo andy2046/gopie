@@ -3,12 +3,12 @@
 // Iceflake is the interface for snowflake similar sequence generator.
 //
 // Iceflake algorithm:
-//
+// ```
 // +-------+--------------------+----------+
 // | sign  | delta milliseconds | sequence |
 // +-------+--------------------+----------+
 // | 1 bit | 63-n bits          | n bits   |
-//
+// ```
 // sequence (n bits)
 // the last custom n bits, represents sequence within the one millisecond.
 //

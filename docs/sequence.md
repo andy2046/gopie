@@ -12,12 +12,12 @@ Package sequence implements Iceflake sequence generator interface.
 Iceflake is the interface for snowflake similar sequence generator.
 
 Iceflake algorithm:
-
+```
 +-------+--------------------+----------+
 | sign  | delta milliseconds | sequence |
 +-------+--------------------+----------+
 | 1 bit | 63-n bits          | n bits   |
-
+```
 sequence (n bits)
 the last custom n bits, represents sequence within the one millisecond.
 
@@ -197,7 +197,7 @@ NextN ...
 
 
 
-## <a name="Sequencer">type</a> [Sequencer](/src/target/sequencer.go?s=639:934#L21)
+## <a name="Sequencer">type</a> [Sequencer](/src/target/sequencer.go?s=647:942#L21)
 ``` go
 type Sequencer interface {
     // Next returns the next sequence.
