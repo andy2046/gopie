@@ -24,3 +24,5 @@ A collection of idiomatic patterns for Go language.
 | [Circuit Breaker](/docs/breaker.md) | Implements Circuit Breaker | ✔ |
 | [Rate Limiter](/docs/ratelimit.md) | Implements Rate Limiter | ✔ |
 | [Bit Flag](/docs/bitflag.md) | Implements Bit Flag | ✔ |
+| [Base58](/docs/base58.md) | Implements Base58 Encoder | ✔ |
+| [Sequence](/docs/sequence.md) | Implements snowflake similar sequence generator | ✔ |
