@@ -9,7 +9,8 @@ for f in pkg/*; do
     echo === Testing pkg $i
     dir=$GOPATH/src/github.com/andy2046/gopie/pkg/$i
     cd $dir
-    GOCACHE=off go test -v -race
+    go test -count=1 -v -race
+    GOGC=off go test -bench=. -run=none -benchtime=3s
     go fmt
     if [[ $i =~ "nocopy" || $i =~ "spinlock" ]]; then
       echo "ignore go vet"

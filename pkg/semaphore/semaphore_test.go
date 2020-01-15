@@ -26,7 +26,7 @@ func TestSemaphore(t *testing.T) {
 
 func BenchmarkSemaphore(b *testing.B) {
 	s := New(1)
-	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
