@@ -59,7 +59,7 @@ var (
 	DefaultConfig = Config{
 		Level:        INFO,
 		Prefix:       "",
-		Flag:         log.Ldate | log.Ltime | log.Lshortfile,
+		Flag:         log.Ldate | log.Ltime,
 		DebugHandler: os.Stdout,
 		InfoHandler:  os.Stdout,
 		WarnHandler:  os.Stdout,
