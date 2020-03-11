@@ -33,7 +33,7 @@ var (
     DefaultConfig = Config{
         Level:        INFO,
         Prefix:       "",
-        Flag:         log.Ldate | log.Ltime | log.Lshortfile,
+        Flag:         log.Ldate | log.Ltime,
         DebugHandler: os.Stdout,
         InfoHandler:  os.Stdout,
         WarnHandler:  os.Stdout,
@@ -115,7 +115,7 @@ Logger is the Logging interface.
 
 
 
-### <a name="NewLogger">func</a> [NewLogger](/src/target/log.go?s=1292:1332#L71)
+### <a name="NewLogger">func</a> [NewLogger](/src/target/log.go?s=1275:1315#L71)
 ``` go
 func NewLogger(options ...Option) Logger
 ```
