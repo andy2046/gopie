@@ -44,7 +44,7 @@ var (
 
 
 
-## <a name="Config">type</a> [Config](/src/target/log.go?s=545:725#L29)
+## <a name="Config">type</a> [Config](/src/target/log.go?s=580:760#L30)
 ``` go
 type Config struct {
     Level        Level
@@ -93,7 +93,7 @@ Logging Levels.
 
 
 
-## <a name="Logger">type</a> [Logger](/src/target/log.go?s=201:510#L16)
+## <a name="Logger">type</a> [Logger](/src/target/log.go?s=201:545#L16)
 ``` go
 type Logger interface {
     Debug(v ...interface{})
@@ -105,6 +105,7 @@ type Logger interface {
     Warnf(format string, v ...interface{})
     Errorf(format string, v ...interface{})
     SetLevel(l Level)
+    LevelLogger(l Level) *log.Logger
 }
 ```
 Logger is the Logging interface.
@@ -115,7 +116,7 @@ Logger is the Logging interface.
 
 
 
-### <a name="NewLogger">func</a> [NewLogger](/src/target/log.go?s=1275:1315#L71)
+### <a name="NewLogger">func</a> [NewLogger](/src/target/log.go?s=1340:1380#L74)
 ``` go
 func NewLogger(options ...Option) Logger
 ```
@@ -125,7 +126,7 @@ NewLogger returns a new Logger.
 
 
 
-## <a name="Option">type</a> [Option](/src/target/log.go?s=772:800#L40)
+## <a name="Option">type</a> [Option](/src/target/log.go?s=807:835#L41)
 ``` go
 type Option = func(*Config) error
 ```

@@ -23,6 +23,7 @@ type (
 		Warnf(format string, v ...interface{})
 		Errorf(format string, v ...interface{})
 		SetLevel(l Level)
+		LevelLogger(l Level) *log.Logger
 	}
 
 	// Config used to init Logger.
@@ -65,6 +66,8 @@ var (
 		WarnHandler:  os.Stdout,
 		ErrorHandler: os.Stderr,
 	}
+
+	_ Logger = &defaultLogger{}
 )
 
 // NewLogger returns a new Logger.
@@ -115,6 +118,12 @@ func (dl *defaultLogger) Warnf(format string, v ...interface{}) {
 
 func (dl *defaultLogger) Errorf(format string, v ...interface{}) {
 	dl.logf(ERROR, format, v...)
+}
+
+func (dl *defaultLogger) LevelLogger(l Level) *log.Logger {
+	dl.RLock()
+	defer dl.RUnlock()
+	return dl.loggerz[l]
 }
 
 func (dl *defaultLogger) log(level Level, v ...interface{}) {
