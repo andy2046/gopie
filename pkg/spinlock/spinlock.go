@@ -29,6 +29,17 @@ func (l *Locker) Unlock() {
 	atomic.StoreUintptr(&l.lock, 0)
 }
 
+// TryLock try to acquire the spinlock,
+// it returns true if succeed, false otherwise.
+func (l *Locker) TryLock() bool {
+	return atomic.CompareAndSwapUintptr(&l.lock, 0, 1)
+}
+
+// IsLocked returns true if locked, false otherwise.
+func (l *Locker) IsLocked() bool {
+	return atomic.LoadUintptr(&l.lock) == 1
+}
+
 // noCopy may be embedded into structs which must not be copied
 // after the first use.
 type noCopy struct{}

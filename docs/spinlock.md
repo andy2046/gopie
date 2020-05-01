@@ -15,7 +15,9 @@ Package spinlock implements Spinlock.
 ## <a name="pkg-index">Index</a>
 * [type Locker](#Locker)
   * [func New() *Locker](#New)
+  * [func (l *Locker) IsLocked() bool](#Locker.IsLocked)
   * [func (l *Locker) Lock()](#Locker.Lock)
+  * [func (l *Locker) TryLock() bool](#Locker.TryLock)
   * [func (l *Locker) Unlock()](#Locker.Unlock)
 
 
@@ -51,11 +53,30 @@ New creates a Locker.
 
 
 
+### <a name="Locker.IsLocked">func</a> (\*Locker) [IsLocked](/src/target/spinlock.go?s=739:771#L39)
+``` go
+func (l *Locker) IsLocked() bool
+```
+IsLocked returns true if locked, false otherwise.
+
+
+
+
 ### <a name="Locker.Lock">func</a> (\*Locker) [Lock](/src/target/spinlock.go?s=309:332#L21)
 ``` go
 func (l *Locker) Lock()
 ```
 Lock wait in a loop to acquire the spinlock.
+
+
+
+
+### <a name="Locker.TryLock">func</a> (\*Locker) [TryLock](/src/target/spinlock.go?s=597:628#L34)
+``` go
+func (l *Locker) TryLock() bool
+```
+TryLock try to acquire the spinlock,
+it returns true if succeed, false otherwise.
 
 
 

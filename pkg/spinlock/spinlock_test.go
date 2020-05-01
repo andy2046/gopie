@@ -1,10 +1,11 @@
 package spinlock_test
 
 import (
-	. "github.com/andy2046/gopie/pkg/spinlock"
 	"sync"
 	"testing"
 	"time"
+
+	. "github.com/andy2046/gopie/pkg/spinlock"
 )
 
 func TestLocker(t *testing.T) {
@@ -19,6 +20,9 @@ func TestLocker(t *testing.T) {
 			for i := 0; i < loops; i++ {
 				l.Lock()
 				count++
+				if !l.IsLocked() {
+					t.Error("expected to be locked")
+				}
 				l.Unlock()
 			}
 			wg.Done()
