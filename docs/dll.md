@@ -16,6 +16,7 @@ Package dll provides a lock-free implementation of doubly linked list.
 * [type Element](#Element)
 * [type List](#List)
   * [func New() *List](#New)
+  * [func (l *List) Empty() bool](#List.Empty)
   * [func (l *List) Init() *List](#List.Init)
   * [func (l *List) Next(node *Element) *Element](#List.Next)
   * [func (l *List) PopLeft() interface{}](#List.PopLeft)
@@ -78,6 +79,15 @@ New returns an initialized list.
 
 
 
+### <a name="List.Empty">func</a> (\*List) [Empty](/src/target/dll.go?s=995:1022#L42)
+``` go
+func (l *List) Empty() bool
+```
+Empty returns true if list l is empty, false otherwise
+
+
+
+
 ### <a name="List.Init">func</a> (\*List) [Init](/src/target/dll.go?s=546:573#L25)
 ``` go
 func (l *List) Init() *List
@@ -87,7 +97,7 @@ Init initializes or clears list l.
 
 
 
-### <a name="List.Next">func</a> (\*List) [Next](/src/target/dll.go?s=5215:5258#L246)
+### <a name="List.Next">func</a> (\*List) [Next](/src/target/dll.go?s=5438:5481#L258)
 ``` go
 func (l *List) Next(node *Element) *Element
 ```
@@ -96,7 +106,7 @@ Next returns the next list element or nil.
 
 
 
-### <a name="List.PopLeft">func</a> (\*List) [PopLeft](/src/target/dll.go?s=2499:2535#L121)
+### <a name="List.PopLeft">func</a> (\*List) [PopLeft](/src/target/dll.go?s=2722:2758#L133)
 ``` go
 func (l *List) PopLeft() interface{}
 ```
@@ -105,7 +115,7 @@ PopLeft returns the first element of list l or nil if the list is empty.
 
 
 
-### <a name="List.PopRight">func</a> (\*List) [PopRight](/src/target/dll.go?s=3166:3203#L152)
+### <a name="List.PopRight">func</a> (\*List) [PopRight](/src/target/dll.go?s=3389:3426#L164)
 ``` go
 func (l *List) PopRight() interface{}
 ```
@@ -114,7 +124,7 @@ PopRight returns the last element of list l or nil if the list is empty.
 
 
 
-### <a name="List.Prev">func</a> (\*List) [Prev](/src/target/dll.go?s=5836:5879#L279)
+### <a name="List.Prev">func</a> (\*List) [Prev](/src/target/dll.go?s=6059:6102#L291)
 ``` go
 func (l *List) Prev(node *Element) *Element
 ```
@@ -123,7 +133,7 @@ Prev returns the previous list element or nil.
 
 
 
-### <a name="List.PushLeft">func</a> (\*List) [PushLeft](/src/target/dll.go?s=3698:3745#L177)
+### <a name="List.PushLeft">func</a> (\*List) [PushLeft](/src/target/dll.go?s=3921:3968#L189)
 ``` go
 func (l *List) PushLeft(v interface{}) *Element
 ```
@@ -132,7 +142,7 @@ PushLeft inserts a new element e with value v at the front of list l and returns
 
 
 
-### <a name="List.PushRight">func</a> (\*List) [PushRight](/src/target/dll.go?s=4255:4303#L202)
+### <a name="List.PushRight">func</a> (\*List) [PushRight](/src/target/dll.go?s=4478:4526#L214)
 ``` go
 func (l *List) PushRight(v interface{}) *Element
 ```
@@ -141,7 +151,7 @@ PushRight inserts a new element e with value v at the back of list l and returns
 
 
 
-### <a name="List.Remove">func</a> (\*List) [Remove](/src/target/dll.go?s=1060:1105#L43)
+### <a name="List.Remove">func</a> (\*List) [Remove](/src/target/dll.go?s=1283:1328#L55)
 ``` go
 func (l *List) Remove(e *Element) interface{}
 ```

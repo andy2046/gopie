@@ -38,6 +38,18 @@ func (l *List) Init() *List {
 	return l
 }
 
+// Empty returns true if list l is empty, false otherwise
+func (l *List) Empty() bool {
+	t := l.head.next.getReference()
+	h := l.tail.prev.getReference()
+
+	if t == l.tail && h == l.head {
+		return true
+	}
+
+	return false
+}
+
 // Remove removes e from l if e is an element of list l.
 // It returns the element value e.Value if succeed, nil otherwise
 func (l *List) Remove(e *Element) interface{} {

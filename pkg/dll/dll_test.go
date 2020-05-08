@@ -11,6 +11,51 @@ var (
 	lock sync.Mutex
 )
 
+func TestDListEmpty(t *testing.T) {
+	l := New()
+	if !l.Empty() {
+		t.Error("new list is empty")
+	}
+
+	var elm *Element
+
+	elm = l.PushLeft(1)
+	if l.Empty() {
+		t.Error("list is not empty")
+	}
+	l.Remove(elm)
+	if !l.Empty() {
+		t.Error("list is empty")
+	}
+
+	elm = l.PushRight(2)
+	if l.Empty() {
+		t.Error("list is not empty")
+	}
+	l.Remove(elm)
+	if !l.Empty() {
+		t.Error("list is empty")
+	}
+
+	elm = l.PushLeft(3)
+	if l.Empty() {
+		t.Error("list is not empty")
+	}
+	l.PopRight()
+	if !l.Empty() {
+		t.Error("list is empty")
+	}
+
+	elm = l.PushRight(4)
+	if l.Empty() {
+		t.Error("list is not empty")
+	}
+	l.PopLeft()
+	if !l.Empty() {
+		t.Error("list is empty")
+	}
+}
+
 func TestDListNext(t *testing.T) {
 	l := New()
 	start := make(chan struct{})
@@ -57,6 +102,10 @@ func TestDListNext(t *testing.T) {
 			break
 		}
 		fmt.Printf("%v.", v)
+	}
+
+	if !l.Empty() {
+		t.Error("list is empty")
 	}
 }
 
@@ -106,6 +155,10 @@ func TestDListPrev(t *testing.T) {
 			break
 		}
 		fmt.Printf("%v.", v)
+	}
+
+	if !l.Empty() {
+		t.Error("list is empty")
 	}
 }
 
@@ -161,6 +214,10 @@ func TestDListPL(t *testing.T) {
 		}
 		fmt.Printf("%v.", v)
 	}
+
+	if !l.Empty() {
+		t.Error("list is empty")
+	}
 }
 
 func TestDListPR(t *testing.T) {
@@ -214,6 +271,10 @@ func TestDListPR(t *testing.T) {
 			break
 		}
 		fmt.Printf("%v.", v)
+	}
+
+	if !l.Empty() {
+		t.Error("list is empty")
 	}
 }
 
