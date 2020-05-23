@@ -3,6 +3,7 @@ package spinlock
 
 import (
 	"runtime"
+	"sync"
 	"sync/atomic"
 )
 
@@ -38,6 +39,11 @@ func (l *Locker) TryLock() bool {
 // IsLocked returns true if locked, false otherwise.
 func (l *Locker) IsLocked() bool {
 	return atomic.LoadUintptr(&l.lock) == 1
+}
+
+// Locker returns a sync.Locker interface implementation.
+func (l *Locker) Locker() sync.Locker {
+	return l
 }
 
 // noCopy may be embedded into structs which must not be copied

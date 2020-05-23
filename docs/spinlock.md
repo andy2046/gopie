@@ -17,6 +17,7 @@ Package spinlock implements Spinlock.
   * [func New() *Locker](#New)
   * [func (l *Locker) IsLocked() bool](#Locker.IsLocked)
   * [func (l *Locker) Lock()](#Locker.Lock)
+  * [func (l *Locker) Locker() sync.Locker](#Locker.Locker)
   * [func (l *Locker) TryLock() bool](#Locker.TryLock)
   * [func (l *Locker) Unlock()](#Locker.Unlock)
 
@@ -29,7 +30,7 @@ Package spinlock implements Spinlock.
 
 
 
-## <a name="Locker">type</a> [Locker](/src/target/spinlock.go?s=139:192#L10)
+## <a name="Locker">type</a> [Locker](/src/target/spinlock.go?s=147:200#L11)
 ``` go
 type Locker struct {
     // contains filtered or unexported fields
@@ -43,7 +44,7 @@ Locker is the Spinlock implementation.
 
 
 
-### <a name="New">func</a> [New](/src/target/spinlock.go?s=219:237#L16)
+### <a name="New">func</a> [New](/src/target/spinlock.go?s=227:245#L17)
 ``` go
 func New() *Locker
 ```
@@ -53,7 +54,7 @@ New creates a Locker.
 
 
 
-### <a name="Locker.IsLocked">func</a> (\*Locker) [IsLocked](/src/target/spinlock.go?s=739:771#L39)
+### <a name="Locker.IsLocked">func</a> (\*Locker) [IsLocked](/src/target/spinlock.go?s=747:779#L40)
 ``` go
 func (l *Locker) IsLocked() bool
 ```
@@ -62,7 +63,7 @@ IsLocked returns true if locked, false otherwise.
 
 
 
-### <a name="Locker.Lock">func</a> (\*Locker) [Lock](/src/target/spinlock.go?s=309:332#L21)
+### <a name="Locker.Lock">func</a> (\*Locker) [Lock](/src/target/spinlock.go?s=317:340#L22)
 ``` go
 func (l *Locker) Lock()
 ```
@@ -71,7 +72,16 @@ Lock wait in a loop to acquire the spinlock.
 
 
 
-### <a name="Locker.TryLock">func</a> (\*Locker) [TryLock](/src/target/spinlock.go?s=597:628#L34)
+### <a name="Locker.Locker">func</a> (\*Locker) [Locker](/src/target/spinlock.go?s=884:921#L45)
+``` go
+func (l *Locker) Locker() sync.Locker
+```
+Locker returns a sync.Locker interface implementation.
+
+
+
+
+### <a name="Locker.TryLock">func</a> (\*Locker) [TryLock](/src/target/spinlock.go?s=605:636#L35)
 ``` go
 func (l *Locker) TryLock() bool
 ```
@@ -81,7 +91,7 @@ it returns true if succeed, false otherwise.
 
 
 
-### <a name="Locker.Unlock">func</a> (\*Locker) [Unlock](/src/target/spinlock.go?s=445:470#L28)
+### <a name="Locker.Unlock">func</a> (\*Locker) [Unlock](/src/target/spinlock.go?s=453:478#L29)
 ``` go
 func (l *Locker) Unlock()
 ```

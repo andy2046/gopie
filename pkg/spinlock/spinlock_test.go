@@ -9,7 +9,7 @@ import (
 )
 
 func TestLocker(t *testing.T) {
-	threads, loops, count := 8, 1000000, 0
+	threads, loops, count := 8, 1000, 0
 	var wg sync.WaitGroup
 	wg.Add(threads)
 
@@ -45,4 +45,20 @@ func TestNoCopy(t *testing.T) {
 	l2 = l1
 	_, _ = l2, l3
 	t.Log("go vet fails here")
+}
+
+func BenchmarkLock(b *testing.B) {
+	l := New()
+	for n := 0; n < b.N; n++ {
+		l.Lock()
+		l.Unlock()
+	}
+}
+
+func BenchmarkMutex(b *testing.B) {
+	var l sync.Mutex
+	for n := 0; n < b.N; n++ {
+		l.Lock()
+		l.Unlock()
+	}
 }
