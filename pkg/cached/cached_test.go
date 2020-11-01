@@ -16,13 +16,35 @@ import (
 const noncePrefix = "NONCE"
 
 var (
+	lock    sync.RWMutex
+	counter int
+
 	truthTeller = func(key string) []byte {
+		incr(1)
 		return []byte(fmt.Sprintf("%s-from-truth", key))
 	}
 
 	afterFromTruth = make(chan struct{})
 	beforeCAS      = make(chan struct{})
 )
+
+func incr(i int) {
+	lock.Lock()
+	counter += i
+	lock.Unlock()
+}
+
+func reset() {
+	lock.Lock()
+	counter = 0
+	lock.Unlock()
+}
+
+func get() int {
+	lock.RLock()
+	defer lock.RUnlock()
+	return counter
+}
 
 func init() {
 	rand.Seed(time.Now().UTC().UnixNano())
@@ -52,12 +74,13 @@ func newLeaseLessor() *fakeLease {
 }
 
 func TestStaleSetProtection(t *testing.T) {
+	reset()
 	k := "key1"
 	expected := []byte(k + "-from-truth")
 	expected2 := []byte(k + "-from-write")
 	c := newCache()
 	l := newLeaseLessor()
-	cd := cached.New(100*time.Millisecond, c, l, truthTeller)
+	cd := cached.New(1*time.Millisecond, c, l, truthTeller)
 
 	wg := sync.WaitGroup{}
 	wg.Add(2)
@@ -87,32 +110,27 @@ func TestStaleSetProtection(t *testing.T) {
 	}()
 
 	wg.Wait()
+
+	if i := get(); i != 1 {
+		t.Fatalf("counter expected %d got %d", 1, i)
+	}
 }
 
 func TestThunderingHerdProtection(t *testing.T) {
+	reset()
 	k := "key2"
 	expected := []byte(k + "-from-truth")
 	expected2 := []byte(k + "-from-write")
 	c := newCache()
 	l := newLeaseLessor()
-	cd := cached.New(100*time.Millisecond, c, l, truthTeller)
+	cd := cached.New(1*time.Millisecond, c, l, truthTeller)
 
 	wg := sync.WaitGroup{}
 	wg.Add(3)
 
 	go func() {
 		<-afterFromTruth // reader already retrive value from truth
-		time.Sleep(1 * time.Millisecond)
-		c.Set(k, expected2)
 		beforeCAS <- struct{}{}
-
-		values := c.Get(k)
-		if !bytes.Equal(values[0], expected2) {
-			t.Fatalf("write expected %s got %s", expected2, values[0])
-		}
-
-		t.Log("write ok")
-		wg.Done()
 	}()
 
 	go func() {
@@ -135,7 +153,28 @@ func TestThunderingHerdProtection(t *testing.T) {
 		wg.Done()
 	}()
 
+	go func() {
+		value := cd.Read(k)
+		if !bytes.Equal(value, expected) {
+			t.Fatalf("read3 expected %s got %s", expected, value)
+		}
+
+		t.Log("read3 ok")
+		wg.Done()
+	}()
+
 	wg.Wait()
+
+	c.Set(k, expected2)
+	values := c.Get(k)
+	if !bytes.Equal(values[0], expected2) {
+		t.Fatalf("write expected %s got %s", expected2, values[0])
+	}
+	t.Log("write ok")
+
+	if i := get(); i != 1 {
+		t.Fatalf("counter expected %d got %d", 1, i)
+	}
 }
 
 func (fl *fakeLease) Nonce() string {
