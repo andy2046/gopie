@@ -18,7 +18,7 @@ Package pushsum implements Push-Sum Protocol.
 * [type Gossiper](#Gossiper)
 * [type Message](#Message)
 * [type PushSum](#PushSum)
-  * [func New(self net.Addr, peers []net.Addr, tk *tik.Ticker, valueReader ValueReader, gossiper Gossiper, intervalInMS, updateSteps, storeSize int) *PushSum](#New)
+  * [func New(self net.Addr, peers []net.Addr, cfg Config) *PushSum](#New)
   * [func (ps *PushSum) Close()](#PushSum.Close)
   * [func (ps *PushSum) Estimate(key uint64) (float64, error)](#PushSum.Estimate)
   * [func (ps *PushSum) IsActive() bool](#PushSum.IsActive)
@@ -46,9 +46,17 @@ ErrNotFound for not found error.
 
 
 
-## <a name="Config">type</a> [Config](/src/target/pushsum.go?s=701:719#L40)
+## <a name="Config">type</a> [Config](/src/target/pushsum.go?s=701:960#L40)
 ``` go
 type Config struct {
+    Ticker               *tik.Ticker
+    ValueReader          ValueReader
+    Gossiper             Gossiper
+    IntervalInMS         int
+    UpdateSteps          int
+    StoreLen             int
+    ConvergenceCount     int
+    ConvergenceThreshold float64
 }
 ```
 Config for PushSum.
@@ -98,7 +106,7 @@ Message for value / weight information of specific key.
 
 
 
-## <a name="PushSum">type</a> [PushSum](/src/target/pushsum.go?s=777:1365#L44)
+## <a name="PushSum">type</a> [PushSum](/src/target/pushsum.go?s=1018:1633#L52)
 ``` go
 type PushSum struct {
     // contains filtered or unexported fields
@@ -112,11 +120,9 @@ PushSum for gossip based computation of aggregate.
 
 
 
-### <a name="New">func</a> [New](/src/target/pushsum.go?s=1880:2034#L97)
+### <a name="New">func</a> [New](/src/target/pushsum.go?s=2148:2210#L106)
 ``` go
-func New(self net.Addr, peers []net.Addr, tk *tik.Ticker,
-    valueReader ValueReader, gossiper Gossiper,
-    intervalInMS, updateSteps, storeSize int) *PushSum
+func New(self net.Addr, peers []net.Addr, cfg Config) *PushSum
 ```
 New returns a new PushSum instance.
 
@@ -124,7 +130,7 @@ New returns a new PushSum instance.
 
 
 
-### <a name="PushSum.Close">func</a> (\*PushSum) [Close](/src/target/pushsum.go?s=3388:3414#L160)
+### <a name="PushSum.Close">func</a> (\*PushSum) [Close](/src/target/pushsum.go?s=3993:4019#L200)
 ``` go
 func (ps *PushSum) Close()
 ```
@@ -133,7 +139,7 @@ Close stop PushSum.
 
 
 
-### <a name="PushSum.Estimate">func</a> (\*PushSum) [Estimate](/src/target/pushsum.go?s=4174:4230#L203)
+### <a name="PushSum.Estimate">func</a> (\*PushSum) [Estimate](/src/target/pushsum.go?s=4779:4835#L243)
 ``` go
 func (ps *PushSum) Estimate(key uint64) (float64, error)
 ```
@@ -142,7 +148,7 @@ Estimate returns the estimated average value of all nodes.
 
 
 
-### <a name="PushSum.IsActive">func</a> (\*PushSum) [IsActive](/src/target/pushsum.go?s=2843:2877#L137)
+### <a name="PushSum.IsActive">func</a> (\*PushSum) [IsActive](/src/target/pushsum.go?s=3448:3482#L177)
 ``` go
 func (ps *PushSum) IsActive() bool
 ```
@@ -151,7 +157,7 @@ IsActive returns true if PushSum is active, false otherwise.
 
 
 
-### <a name="PushSum.IsClosed">func</a> (\*PushSum) [IsClosed](/src/target/pushsum.go?s=3582:3616#L169)
+### <a name="PushSum.IsClosed">func</a> (\*PushSum) [IsClosed](/src/target/pushsum.go?s=4187:4221#L209)
 ``` go
 func (ps *PushSum) IsClosed() bool
 ```
@@ -160,7 +166,7 @@ IsClosed returns true if closed, false otherwise.
 
 
 
-### <a name="PushSum.NPeers">func</a> (\*PushSum) [NPeers](/src/target/pushsum.go?s=3705:3736#L174)
+### <a name="PushSum.NPeers">func</a> (\*PushSum) [NPeers](/src/target/pushsum.go?s=4310:4341#L214)
 ``` go
 func (ps *PushSum) NPeers() int
 ```
@@ -169,7 +175,7 @@ NPeers returns the number of peers.
 
 
 
-### <a name="PushSum.OnMessage">func</a> (\*PushSum) [OnMessage](/src/target/pushsum.go?s=4577:4618#L224)
+### <a name="PushSum.OnMessage">func</a> (\*PushSum) [OnMessage](/src/target/pushsum.go?s=5182:5223#L264)
 ``` go
 func (ps *PushSum) OnMessage(msg Message)
 ```
@@ -178,7 +184,7 @@ OnMessage process message from other nodes.
 
 
 
-### <a name="PushSum.Pause">func</a> (\*PushSum) [Pause](/src/target/pushsum.go?s=3255:3281#L153)
+### <a name="PushSum.Pause">func</a> (\*PushSum) [Pause](/src/target/pushsum.go?s=3860:3886#L193)
 ``` go
 func (ps *PushSum) Pause()
 ```
@@ -187,7 +193,7 @@ Pause wait in a loop to pause the PushSum.
 
 
 
-### <a name="PushSum.Resume">func</a> (\*PushSum) [Resume](/src/target/pushsum.go?s=2959:2986#L142)
+### <a name="PushSum.Resume">func</a> (\*PushSum) [Resume](/src/target/pushsum.go?s=3564:3591#L182)
 ``` go
 func (ps *PushSum) Resume()
 ```
@@ -196,7 +202,7 @@ Resume activate the PushSum.
 
 
 
-### <a name="PushSum.SetPeers">func</a> (\*PushSum) [SetPeers](/src/target/pushsum.go?s=3831:3876#L182)
+### <a name="PushSum.SetPeers">func</a> (\*PushSum) [SetPeers](/src/target/pushsum.go?s=4436:4481#L222)
 ``` go
 func (ps *PushSum) SetPeers(peers []net.Addr)
 ```
@@ -205,7 +211,7 @@ SetPeers reset peers.
 
 
 
-### <a name="PushSum.TryPause">func</a> (\*PushSum) [TryPause](/src/target/pushsum.go?s=3114:3148#L148)
+### <a name="PushSum.TryPause">func</a> (\*PushSum) [TryPause](/src/target/pushsum.go?s=3719:3753#L188)
 ``` go
 func (ps *PushSum) TryPause() bool
 ```

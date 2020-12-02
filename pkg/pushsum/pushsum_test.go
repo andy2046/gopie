@@ -47,9 +47,34 @@ func TestPushSum(t *testing.T) {
 	r1 = newReader()
 	r2 = newReader()
 
-	ps0 = New(node0, []net.Addr{node1, node2}, nil, r0, g, 100, 1, 64)
-	ps1 = New(node1, []net.Addr{node0, node2}, nil, r1, g, 100, 1, 64)
-	ps2 = New(node2, []net.Addr{node1, node0}, nil, r2, g, 100, 1, 64)
+	cfg0 := Config{
+		Ticker:       nil,
+		ValueReader:  r0,
+		Gossiper:     g,
+		IntervalInMS: 100,
+		UpdateSteps:  1,
+		StoreLen:     8,
+	}
+	cfg1 := Config{
+		Ticker:       nil,
+		ValueReader:  r1,
+		Gossiper:     g,
+		IntervalInMS: 100,
+		UpdateSteps:  1,
+		StoreLen:     8,
+	}
+	cfg2 := Config{
+		Ticker:       nil,
+		ValueReader:  r2,
+		Gossiper:     g,
+		IntervalInMS: 100,
+		UpdateSteps:  1,
+		StoreLen:     8,
+	}
+
+	ps0 = New(node0, []net.Addr{node1, node2}, cfg0)
+	ps1 = New(node1, []net.Addr{node0, node2}, cfg1)
+	ps2 = New(node2, []net.Addr{node1, node0}, cfg2)
 
 	defer func() {
 		ps0.Close()

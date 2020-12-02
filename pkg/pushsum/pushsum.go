@@ -38,6 +38,14 @@ type (
 
 	// Config for PushSum.
 	Config struct {
+		Ticker               *tik.Ticker
+		ValueReader          ValueReader
+		Gossiper             Gossiper
+		IntervalInMS         int
+		UpdateSteps          int
+		StoreLen             int
+		ConvergenceCount     int
+		ConvergenceThreshold float64
 	}
 
 	// PushSum for gossip based computation of aggregate.
@@ -66,6 +74,7 @@ type (
 		updateSteps uint64
 
 		convergenceThreshold float64
+		convergenceCount     int
 
 		mut  sync.RWMutex
 		once sync.Once
@@ -94,19 +103,50 @@ func init() {
 }
 
 // New returns a new PushSum instance.
-func New(self net.Addr, peers []net.Addr, tk *tik.Ticker,
-	valueReader ValueReader, gossiper Gossiper,
-	intervalInMS, updateSteps, storeSize int) *PushSum {
-	size := nextPowerOf2(uint32(storeSize))
-	steps := nextPowerOf2(uint32(updateSteps))
+func New(self net.Addr, peers []net.Addr, cfg Config) *PushSum {
+	if self == nil {
+		panic("nil self")
+	}
 
+	if len(peers) == 0 {
+		panic("empty peers")
+	}
+
+	if cfg.ValueReader == nil {
+		panic("nil ValueReader")
+	}
+
+	if cfg.Gossiper == nil {
+		panic("nil Gossiper")
+	}
+
+	ct := cfg.ConvergenceThreshold
+	if ct == 0 {
+		ct = math.Pow10(-10)
+	}
+
+	cc := cfg.ConvergenceCount
+	if cc < 3 {
+		cc = 3
+	}
+
+	steps := nextPowerOf2(uint32(cfg.UpdateSteps))
+
+	slen := cfg.StoreLen
+	if slen < 8 {
+		slen = 8
+	}
+	size := nextPowerOf2(uint32(slen))
+
+	tk := cfg.Ticker
 	if tk == nil {
 		tk = tik.New()
 	}
 
 	ps := &PushSum{
-		convergenceThreshold: math.Pow10(-5),
-		intervalInMS:         uint64(intervalInMS),
+		convergenceThreshold: ct,
+		convergenceCount:     cc,
+		intervalInMS:         uint64(cfg.IntervalInMS),
 		msgCh:                make(chan Message),
 		closer:               make(chan struct{}),
 		store:                newStore(size),
@@ -115,8 +155,8 @@ func New(self net.Addr, peers []net.Addr, tk *tik.Ticker,
 		self:                 self,
 		peers:                peers,
 		tk:                   tk,
-		valueReader:          valueReader,
-		gossiper:             gossiper,
+		valueReader:          cfg.ValueReader,
+		gossiper:             cfg.Gossiper,
 	}
 
 	go func() {
@@ -268,7 +308,7 @@ func (ps *PushSum) onNextStep(k uint64) bool {
 		Weight: w / 2,
 	})
 
-	if vw.count == 3 {
+	if vw.count == ps.convergenceCount {
 		// converged
 		return false
 	}
