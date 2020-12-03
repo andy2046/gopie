@@ -6,6 +6,8 @@ import (
 	"sync"
 	"testing"
 	"time"
+
+	"github.com/andy2046/tik"
 )
 
 type (
@@ -14,6 +16,10 @@ type (
 	}
 
 	gossiper struct{}
+
+	scheduler struct {
+		tk *tik.Ticker
+	}
 
 	reader struct {
 		receiver chan float64
@@ -38,7 +44,7 @@ var (
 )
 
 func TestPushSum(t *testing.T) {
-	threshold := float64(0.2)
+	threshold := float64(0.5)
 	key := uint64(2020)
 	wg := &sync.WaitGroup{}
 	wg.Add(3)
@@ -48,7 +54,7 @@ func TestPushSum(t *testing.T) {
 	r2 = newReader()
 
 	cfg0 := Config{
-		Ticker:       nil,
+		Scheduler:    newScheduler(),
 		ValueReader:  r0,
 		Gossiper:     g,
 		IntervalInMS: 100,
@@ -56,7 +62,7 @@ func TestPushSum(t *testing.T) {
 		StoreLen:     8,
 	}
 	cfg1 := Config{
-		Ticker:       nil,
+		Scheduler:    newScheduler(),
 		ValueReader:  r1,
 		Gossiper:     g,
 		IntervalInMS: 100,
@@ -64,7 +70,7 @@ func TestPushSum(t *testing.T) {
 		StoreLen:     8,
 	}
 	cfg2 := Config{
-		Ticker:       nil,
+		Scheduler:    newScheduler(),
 		ValueReader:  r2,
 		Gossiper:     g,
 		IntervalInMS: 100,
@@ -153,6 +159,20 @@ func (g gossiper) Gossip(addr net.Addr, msg Message) {
 	case "2":
 		ps2.OnMessage(msg)
 	default:
+	}
+}
+
+func (s scheduler) Schedule(interval uint64, cb func()) {
+	_ = s.tk.Schedule(interval, cb)
+}
+
+func (s scheduler) Close() {
+	s.tk.Close()
+}
+
+func newScheduler() scheduler {
+	return scheduler{
+		tk: tik.New(),
 	}
 }
 

@@ -11,8 +11,6 @@ import (
 	"runtime"
 	"sync"
 	"sync/atomic"
-
-	"github.com/andy2046/tik"
 )
 
 // ErrNotFound for not found error.
@@ -22,6 +20,12 @@ type (
 	// Gossiper communicate message to other nodes.
 	Gossiper interface {
 		Gossip(addr net.Addr, msg Message)
+	}
+
+	// Scheduler schedule tasks to run in an interval.
+	Scheduler interface {
+		Schedule(interval uint64, cb func())
+		Close()
 	}
 
 	// ValueReader returns the true value.
@@ -38,7 +42,7 @@ type (
 
 	// Config for PushSum.
 	Config struct {
-		Ticker               *tik.Ticker
+		Scheduler            Scheduler
 		ValueReader          ValueReader
 		Gossiper             Gossiper
 		IntervalInMS         int
@@ -52,7 +56,7 @@ type (
 	PushSum struct {
 		self        net.Addr
 		peers       []net.Addr
-		tk          *tik.Ticker
+		scheduler   Scheduler
 		valueReader ValueReader
 		gossiper    Gossiper
 		active      uintptr
@@ -120,6 +124,10 @@ func New(self net.Addr, peers []net.Addr, cfg Config) *PushSum {
 		panic("nil Gossiper")
 	}
 
+	if cfg.Scheduler == nil {
+		panic("nil Scheduler")
+	}
+
 	ct := cfg.ConvergenceThreshold
 	if ct == 0 {
 		ct = math.Pow10(-10)
@@ -138,11 +146,6 @@ func New(self net.Addr, peers []net.Addr, cfg Config) *PushSum {
 	}
 	size := nextPowerOf2(uint32(slen))
 
-	tk := cfg.Ticker
-	if tk == nil {
-		tk = tik.New()
-	}
-
 	ps := &PushSum{
 		convergenceThreshold: ct,
 		convergenceCount:     cc,
@@ -154,7 +157,7 @@ func New(self net.Addr, peers []net.Addr, cfg Config) *PushSum {
 		updateSteps:          uint64(steps),
 		self:                 self,
 		peers:                peers,
-		tk:                   tk,
+		scheduler:            cfg.Scheduler,
 		valueReader:          cfg.ValueReader,
 		gossiper:             cfg.Gossiper,
 	}
@@ -199,7 +202,7 @@ func (ps *PushSum) Pause() {
 // Close stop PushSum.
 func (ps *PushSum) Close() {
 	ps.once.Do(func() {
-		ps.tk.Close()
+		ps.scheduler.Close()
 		close(ps.closer)
 		atomic.CompareAndSwapUintptr(&ps.closed, 0, 1)
 	})
@@ -348,13 +351,13 @@ func (ps *PushSum) onPushSumMessage(msg Message) {
 	ps.store.insert(pos, vw)
 	atomic.AddUint64(&ps.pos, 1) // TODO: truncate pos
 
-	_ = ps.tk.Schedule(ps.intervalInMS, ps.callback(k))
+	ps.scheduler.Schedule(ps.intervalInMS, ps.callback(k))
 }
 
-func (ps *PushSum) callback(k uint64) tik.Callback {
+func (ps *PushSum) callback(k uint64) func() {
 	return func() {
 		if ok := ps.onNextStep(k); ok {
-			_ = ps.tk.Schedule(ps.intervalInMS, ps.callback(k))
+			ps.scheduler.Schedule(ps.intervalInMS, ps.callback(k))
 		}
 	}
 }
